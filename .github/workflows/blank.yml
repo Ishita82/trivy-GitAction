@@ -19,13 +19,15 @@ jobs:
       - name: Run Trivy vulnerability scanner in fs mode
         uses: Ishita82/trivy-GitAction@main
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: trivy.yaml
+          image-ref: 'docker.io/hub.docker.com/_/httpd'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.1.0
+        if: always()
         with:
-          sarif_path: 'image-sarif.test'
+          name: trivy-ref
+          sarif_path: 'trivy-results.sarif'
     
                 
