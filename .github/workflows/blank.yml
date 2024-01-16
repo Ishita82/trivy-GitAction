@@ -27,12 +27,12 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: Ishita82/trivy-GitAction@main
         with:
-         args: trivy image --format sarif -o trivyresults.sarif httpd
+         args: trivy image --format template --template "@html.tpl" -o imageReport.html  httpd
       
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
-         sarif_file: 'trivyresults.sarif' 
+         path: 'imageReport.html' 
       # - name: Run Trivy vulnerability scanner in fs mode
       #   uses: Ishita82/trivy-GitAction@main
       #   with:
