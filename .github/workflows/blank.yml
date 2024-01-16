@@ -13,21 +13,40 @@ jobs:
   build:
     name: OS
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Run Trivy vulnerability scanner in fs mode
+        
+      - name: Run Trivy vulnerability scanner
         uses: Ishita82/trivy-GitAction@main
         with:
-          image-ref: 'docker.io/hub.docker.com/_/httpd'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4.1.0
-        if: always()
+         image-ref: httpd
+         format: 'sarif'
+         output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          name: trivy-ref
-          sarif_path: 'trivy-results.sarif'
+         sarif_file: 'trivy-results.sarif' 
+      # - name: Run Trivy vulnerability scanner in fs mode
+      #   uses: Ishita82/trivy-GitAction@main
+      #   with:
+      #     image-ref: 'docker.io/hub.docker.com/_/httpd'
+      #     format: 'sarif'
+      #     output: 'trivy-results.sarif'
+
+      # - name: Upload a Build Artifact
+      #   uses: actions/upload-artifact@v4.1.0
+      #   if: always()
+      #   with:
+      #     name: trivy-ref
+      #     sarif_path: 'trivy-results.sarif'
     
                 
