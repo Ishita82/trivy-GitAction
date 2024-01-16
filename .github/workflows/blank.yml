@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: OS
+    name: Trivy
     runs-on: ubuntu-latest
     
     permissions:
@@ -32,10 +32,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
         
+      # - name: Run Trivy vulnerability scanner
+      #   uses: Ishita82/trivy-GitAction@main
+      #   with:
+      #     args: trivy image --format sarif -o results.sarif ubuntu
+
       - name: Run Trivy vulnerability scanner
-        uses: Ishita82/trivy-GitAction@main
-        with:
-          args: trivy image --format sarif -o results.sarif ubuntu
+        run: trivy image --format sarif -o results.sarif ubuntu
       
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
