@@ -27,7 +27,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: Ishita82/trivy-GitAction@main
         with:
-         args: trivy httpd --format json
+         args: trivy image httpd --format json
          format: 'sarif'
          output: 'trivy-results.sarif'
       
