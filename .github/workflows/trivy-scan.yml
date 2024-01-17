@@ -53,20 +53,28 @@ jobs:
          sarif_file: 'results.sarif'
 
       - name: Check Trivy Scan Results
-        run: cat results.sarif | grep LOW
-          # # Print the structure of the SARIF file
-          # # jq . results.sarif
+        run: |
+          # Print the structure of the SARIF file
+          # jq . results.sarif
       
-          
-          # # CRITICAL_COUNT=$(jq -r '.runs[].tool.driver.rules | select(.!=null) | map(select(.properties.severity == "LOW")) | length' results.sarif)
-          # # echo $CRITICAL_COUNT
-          
-          # if [ $CRITICAL_COUNT -gt 0 ]; then
-          #   echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
-          #   exit 1
-          # else
-          #   echo "Trivy scan passed without critical vulnerabilities."
-          # fi
+      - name: Count LOW occurrences
+        id: count_low
+        run: |
+          CRITICAL_COUNT=$(cat results.sarif | grep -c LOW || true)
+          echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
+
+      - name: Display CRITICAL_COUNT
+        run: |
+          echo "CRITICAL_COUNT is $CRITICAL_COUNT"
+
+      - name: Check for Critical Vulnerabilities
+        run: |
+          if [ $CRITICAL_COUNT -gt 0 ]; then
+            echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
+            exit 1
+          else
+            echo "Trivy scan passed without critical vulnerabilities."
+          fi
 
 
 
