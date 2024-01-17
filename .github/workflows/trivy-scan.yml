@@ -51,16 +51,11 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
          sarif_file: 'results.sarif'
-
-      - name: Check Trivy Scan Results
-        run: |
-          # Print the structure of the SARIF file
-          # jq . results.sarif
       
       - name: Count LOW occurrences
         id: count_low
         run: |
-          CRITICAL_COUNT=$(cat results.sarif | grep -c LOW || true)
+          CRITICAL_COUNT=$(cat results.sarif | grep -c CRITICAL || true)
           echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
 
       - name: Display CRITICAL_COUNT
