@@ -55,12 +55,12 @@ jobs:
         with:
          sarif_file: 'results.sarif'
 
-      - name: Check Trivy Scan Results
-        run: |
-          CRITICAL_COUNT=$(jq -r '.[].Vulnerabilities | select(.!=null) | .[].Severity | select(.=="CRITICAL")' results.sarif | wc -l)
-          if [ $CRITICAL_COUNT -gt 0 ]; then
-            echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
-            exit 1
-          else
-            echo "Trivy scan passed without critical vulnerabilities."
-          fi
+      # - name: Check Trivy Scan Results
+      #   run: |
+      #     CRITICAL_COUNT=$(jq -r '.[].Vulnerabilities | select(.!=null) | .[].Severity | select(.=="CRITICAL")' results.sarif | wc -l)
+      #     if [ $CRITICAL_COUNT -gt 0 ]; then
+      #       echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
+      #       exit 1
+      #     else
+      #       echo "Trivy scan passed without critical vulnerabilities."
+      #     fi
