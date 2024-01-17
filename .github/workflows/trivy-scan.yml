@@ -19,31 +19,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install trivy
-        run: |
-          sudo apt-get install wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install trivy
+      # - name: Install trivy
+      #   run: |
+      #     sudo apt-get install wget apt-transport-https gnupg lsb-release
+      #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+      #     echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+      #     sudo apt-get update
+      #     sudo apt-get install trivy
       
       # - name: Run Trivy vulnerability scanner
       #   run: trivy image --format sarif -o results.sarif httpd
         
-      - name: Run Trivy vulnerability scanner
-        uses: Ishita82/trivy-GitAction@main
-        with:
-          args: trivy image --format sarif -o results.sarif ubuntu
+      # - name: Run Trivy vulnerability scanner
+      #   uses: Ishita82/trivy-GitAction@main
+      #   with:
+      #     args: trivy image --format sarif -o results.sarif ubuntu
 
       # - name: Run Trivy vulnerability scanner
       #   uses: Ishita82/trivy-GitAction@main
       #   with:
-      #     scan-type: 'config'
+      #     scan-type: 'git'
       #     hide-progress: false
       #     format: 'sarif'
       #     output: 'results.sarif'
       #     exit-code: '1'
       #     ignore-unfixed: true
+
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: Ishita82/trivy-GitAction@main
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'results.sarif'
+          severity: 'CRITICAL'
+          skip-dirs: "ignored-dir"
+      
       # - name: Check Trivy Scan Results
       #   run: cat results.sarif
         
