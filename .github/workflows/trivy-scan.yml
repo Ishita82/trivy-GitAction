@@ -56,7 +56,7 @@ jobs:
         id: count_low
         run: |
           CRITICAL_COUNT=$(cat results.sarif | grep -c CRITICAL || true)
-          echo "CRITICAL_COUNT=$CRITICAL_COUNT"
+          echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
 
       - name: Display CRITICAL_COUNT
         run: |
