@@ -45,24 +45,21 @@ jobs:
       #     exit-code: '1'
       #     ignore-unfixed: true
 
-      - name: Run Trivy vulnerability scanner in fs mode
+      - name: Trivy Image Scan
         uses: Ishita82/trivy-GitAction@main
         with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/sarif.tpl'
-          output: 'results.sarif'
-          severity: 'CRITICAL'
-          skip-dirs: "ignored-dir"
-      
+          image-ref: httpd
+          format: json
+          output: results.json
+
       # - name: Check Trivy Scan Results
       #   run: cat results.sarif
         
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-         sarif_file: 'results.sarif'
+          name: Scanning Results
+          sarif_file: results.json
       
       - name: Count LOW occurrences
         id: count_low
