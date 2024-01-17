@@ -32,41 +32,35 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
       
-      # - name: Run Trivy vulnerability scanner
-      #   run: trivy image --format sarif -o results.sarif nginx
+      - name: Run Trivy vulnerability scanner
+        run: trivy image --format sarif -o results.sarif nginx
         
       # - name: Run Trivy vulnerability scanner
       #   uses: Ishita82/trivy-GitAction@main
       #   with:
       #     args: trivy image --format sarif -o results.sarif ubuntu
 
-      - name: Run Trivy vulnerability scanner
-        uses: Ishita82/trivy-GitAction@main
-        with:
-          scan-type: 'config'
-          hide-progress: false
-          format: 'sarif'
-          output: 'results.sarif'
-          exit-code: '1'
-          ignore-unfixed: true
+      # - name: Run Trivy vulnerability scanner
+      #   uses: Ishita82/trivy-GitAction@main
+      #   with:
+      #     scan-type: 'config'
+      #     hide-progress: false
+      #     format: 'sarif'
+      #     output: 'results.sarif'
+      #     exit-code: '1'
+      #     ignore-unfixed: true
       
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
          sarif_file: 'results.sarif'
-         
-      # - name: Run Trivy vulnerability scanner in fs mode
-      #   uses: Ishita82/trivy-GitAction@main
-      #   with:
-      #     image-ref: 'docker.io/hub.docker.com/_/httpd'
-      #     format: 'sarif'
-      #     output: 'trivy-results.sarif'
 
-      # - name: Upload a Build Artifact
-      #   uses: actions/upload-artifact@v4.1.0
-      #   if: always()
-      #   with:
-      #     name: trivy-ref
-      #     sarif_path: 'trivy-results.sarif'
-    
-                
+      - name: Check Trivy Scan Results
+        run: |
+          CRITICAL_COUNT=$(jq -r '.[].Vulnerabilities | select(.!=null) | .[].Severity | select(.=="CRITICAL")' results.sarif | wc -l)
+          if [ $CRITICAL_COUNT -gt 0 ]; then
+            echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
+            exit 1
+          else
+            echo "Trivy scan passed without critical vulnerabilities."
+          fi
