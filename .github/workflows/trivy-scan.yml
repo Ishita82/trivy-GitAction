@@ -48,7 +48,7 @@ jobs:
       - name: Trivy Image Scan
         uses: Ishita82/trivy-GitAction@main
         with:
-          image-ref: httpd
+          image-ref: nginx:latest
           format: json
           output: results.json
 
