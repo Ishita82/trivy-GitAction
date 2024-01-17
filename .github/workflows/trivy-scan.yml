@@ -1,6 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
-
 name: Trivy
 on:
   push:
@@ -58,7 +55,7 @@ jobs:
       - name: Check Trivy Scan Results
         run: |
           # Print the structure of the SARIF file
-          jq . results.sarif
+          # jq . results.sarif
       
           CRITICAL_COUNT=$(jq -r '.runs[].tool.driver.rules | select(.!=null) | map(select(.properties.severity == "LOW")) | length' results.sarif)
           echo $CRITICAL_COUNT
