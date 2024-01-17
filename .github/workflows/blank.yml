@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
 
-name: CI
+name: Trivy
 on:
   push:
     branches: [ "main" ]
@@ -11,14 +11,14 @@ on:
 
 jobs:
   build:
-    name: Trivy
+    name: Trivy Scanning
     runs-on: ubuntu-latest
     
-    permissions:
-      contents: read
-      # packages: write
-      # id-token: write
-      security-events: write
+    # permissions:
+    #   contents: read
+    #   # packages: write
+    #   # id-token: write
+    #   security-events: write
       
     steps:
       - name: Checkout code
@@ -43,10 +43,9 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: Ishita82/trivy-GitAction@main
         with:
-          scan-type: 'image'
+          scan-type: 'config'
           hide-progress: false
           format: 'sarif'
-          scan-ref: ubuntu
           output: 'results.sarif'
           exit-code: '1'
           ignore-unfixed: true
