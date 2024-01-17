@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install trivy
       
       - name: Run Trivy vulnerability scanner
-        run: trivy image --format sarif -o results.sarif nginx
+        run: trivy image --format sarif -o results.sarif httpd
         
       # - name: Run Trivy vulnerability scanner
       #   uses: Ishita82/trivy-GitAction@main
