@@ -57,11 +57,16 @@ jobs:
 
       - name: Check Trivy Scan Results
         run: |
-          CRITICAL_COUNT=$(jq -r '.runs[].results | select(.!=null) | .[].properties.severity | select(.=="CRITICAL")' results.sarif | wc -l)
+          # Print the structure of the SARIF file
+          jq . results.sarif
+      
+          # Count the occurrences of CRITICAL severity
+          CRITICAL_COUNT=$(jq -r '.runs[].results | select(.!=null) | map(select(.properties.severity == "CRITICAL")) | length' results.sarif)
           if [ $CRITICAL_COUNT -gt 0 ]; then
             echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
             exit 1
           else
             echo "Trivy scan passed without critical vulnerabilities."
           fi
+
 
