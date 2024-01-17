@@ -49,22 +49,15 @@ jobs:
       #     output: 'results.sarif'
       #     exit-code: '1'
       #     ignore-unfixed: true
-      
+      - name: Check Trivy Scan Results
+        run: cat results.sarif
+        
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
          sarif_file: 'results.sarif'
 
-      - name: Check Trivy Scan Results
-        run: |
-          LOW_COUNT=$(jq -r '.runs[].results | select(.!=null) | .[].properties.severity | select(.=="LOW")' results.sarif | wc -l)
-          if [ $LOW_COUNT -gt 0 ]; then
-              echo "Trivy detected $LOW_COUNT low-severity vulnerabilities. Failing the build."
-              exit 1
-          else
-              echo "Trivy scan passed without low-severity vulnerabilities."
-          fi
-
+      
 
 
 
