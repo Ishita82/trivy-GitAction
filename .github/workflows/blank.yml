@@ -14,11 +14,11 @@ jobs:
     name: Trivy Scanning
     runs-on: ubuntu-latest
     
-    # permissions:
-    #   contents: read
-    #   # packages: write
-    #   # id-token: write
-    #   security-events: write
+    permissions:
+      contents: read
+      # packages: write
+      # id-token: write
+      security-events: write
       
     steps:
       - name: Checkout code
