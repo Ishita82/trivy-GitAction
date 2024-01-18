@@ -53,7 +53,7 @@ jobs:
       #     output: results.json
 
       - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
+        uses: Ishita82/trivy-GitAction@main
         with:
           scan-type: 'fs'
           ignore-unfixed: true
