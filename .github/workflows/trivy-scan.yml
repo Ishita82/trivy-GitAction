@@ -51,9 +51,10 @@ jobs:
       #     image-ref: nginx:latest
       #     format: json
       #     output: results.json
+      
 
       - name: Run Trivy vulnerability scanner in repo mode
-        uses: Ishita82/trivy-GitAction@main
+        uses: aquasecurity/trivy-action@0.16.1
         with:
           scan-type: 'fs'
           ignore-unfixed: true
