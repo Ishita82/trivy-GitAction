@@ -68,7 +68,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           name: Scanning Results
-          sarif_file: results.json
+          sarif_file: results.sarif
       
       - name: Count LOW occurrences
         id: count_low
