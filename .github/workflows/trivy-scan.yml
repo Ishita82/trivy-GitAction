@@ -58,7 +58,7 @@ jobs:
           ignore-unfixed: true
           format: 'sarif'
           output: 'results.sarif'
-          severity: 'CRITICAL'
+          severity: 'LOW'
           exit-code: 0
 
       # - name: Check Trivy Scan Results
