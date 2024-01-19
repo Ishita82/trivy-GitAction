@@ -4,8 +4,7 @@ on:
     branches:
       - main
 
-
-      jobs:
+jobs:
   build:
     name: Trivy Scanning
     runs-on: ubuntu-latest
