@@ -58,7 +58,8 @@ jobs:
           ignore-unfixed: true
           format: 'sarif'
           output: 'results.sarif'
-          severity: 'LOW'
+          severity: 'CRITICAL'
+          exit-code: 1
 
       # - name: Check Trivy Scan Results
       #   run: cat results.sarif
