@@ -32,14 +32,21 @@ jobs:
 
       # - name: Check Trivy Scan Results
       #   run: cat results.sarif
-        
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          name: Scanning Results
-          sarif_file: results.sarif
-          token: ${{ secrets.TRIVY_ACCESS }}
-          tool: dependabot
+
+      - name: Upload Trivy scan results to Dependabot tab
+        run: |
+          curl -X POST -H "Authorization: Bearer ${{ secrets.TRIVY_ACCESS }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/Ishita82/trivy-GitAction/code-scanning/sarifs" \
+          --data-binary @"results.sarif"
+          
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     name: Scanning Results
+      #     sarif_file: results.sarif
+      #     token: ${{ secrets.TRIVY_ACCESS }}
+      #     tool: dependabot
       
       - name: Count LOW occurrences
         id: count_low
