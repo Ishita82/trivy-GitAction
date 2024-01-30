@@ -39,6 +39,7 @@ jobs:
           name: Scanning Results
           sarif_file: results.sarif
           token: ${{ secrets.TRIVY_ACCESS }}
+          tool: dependabot
       
       - name: Count LOW occurrences
         id: count_low
