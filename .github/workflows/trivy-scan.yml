@@ -23,12 +23,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v1
-        with:
-          github-token: "${{ secrets.TRIVY_ACCESS }}"
-
       - name: Build an image from Dockerfile
         run: |
           docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
