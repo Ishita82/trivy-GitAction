@@ -1,102 +1,43 @@
-name: Trivy
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: trivy
+
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  issues: write
+  repository-projects: write
+  actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+  security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
 
 jobs:
   build:
-    name: Trivy Scanning
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      security-events: write
-      pull-requests: write
-      
+    runs-on: "ubuntu-20.04"
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
-          token: ${{ secrets.TRIVY_ACCESS }}  
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
 
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@0.16.1
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'results.sarif'
-          severity: 'LOW'
-          # exit-code: 1
-
-      # - name: Check Trivy Scan Results
-      #   run: cat results.sarif
-
-      # - name: Upload Trivy scan results to Dependabot tab
-      #   run: |
-      #     curl -X POST -H "Authorization: Bearer ${{ secrets.TRIVY_ACCESS }}" \
-      #     -H "Accept: application/vnd.github.v3+json" \
-      #     "https://api.github.com/repos/Ishita82/trivy-GitAction/code-scanning/sarifs" \
-      #     --data-binary @"results.sarif"
-          
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          name: Scanning Results
-          sarif_file: results.sarif
+          sarif_file: 'trivy-results.sarif'
           token: ${{ secrets.TRIVY_ACCESS }}
-          tool: dependabot
-      
-      - name: Count LOW occurrences
-        id: count_low
-        run: |
-          CRITICAL_COUNT=$(cat results.sarif | grep -c CRITICAL || true)
-          echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
-
-      - name: Display CRITICAL_COUNT
-        run: |
-          echo "CRITICAL_COUNT is $CRITICAL_COUNT"
-
-      - name: Check for Critical Vulnerabilities
-        run: |
-          if [ $CRITICAL_COUNT -gt 0 ]; then
-            echo "Trivy detected $CRITICAL_COUNT critical vulnerabilities. Failing the build."
-            exit 1
-          else
-            echo "Trivy scan passed without critical vulnerabilities."
-          fi
-
-
-          # - name: Install trivy
-      #   run: |
-      #     sudo apt-get install wget apt-transport-https gnupg lsb-release
-      #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-      #     echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-      #     sudo apt-get update
-      #     sudo apt-get install trivy
-      
-      # - name: Run Trivy vulnerability scanner
-      #   run: trivy image --format sarif -o results.sarif httpd
-        
-      # - name: Run Trivy vulnerability scanner
-      #   uses: Ishita82/trivy-GitAction@main
-      #   with:
-      #     args: trivy image --format sarif -o results.sarif ubuntu
-
-      # - name: Run Trivy vulnerability scanner
-      #   uses: Ishita82/trivy-GitAction@main
-      #   with:
-      #     scan-type: 'git'
-      #     hide-progress: false
-      #     format: 'sarif'
-      #     output: 'results.sarif'
-      #     exit-code: '1'
-      #     ignore-unfixed: true
-
-      # - name: Trivy Image Scan
-      #   uses: Ishita82/trivy-GitAction@main
-      #   with:
-      #     image-ref: nginx:latest
-      #     format: json
-      #     output: results.json
